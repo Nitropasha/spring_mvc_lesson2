@@ -1,54 +1,61 @@
 package web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import web.config.WebConfig;
-import web.entity.Car;
-import web.entity.User;
-import web.service.CarService;
-import web.service.UserService;
 
-import java.util.ArrayList;
+
+import web.entity.User;
+import web.service.UserService;
+import javax.validation.Valid;
 import java.util.List;
-import java.util.Objects;
+
 
 @Controller
 public class UserController {
-    @Autowired
-    private CarService carService;
+
     @Autowired
     private UserService userService;
-    @GetMapping(value = "/cars")
-    public String printWelcome(@RequestParam("count") int count, Model model) {
+    @RequestMapping(value = "/")
+    public String printWelcome( Model model) {
         List<User> users = userService.listUsers();
-        for (User user : users) {
-            System.out.println("Id = "+user.getId());
-            System.out.println("First Name = "+user.getFirstName());
-            System.out.println("Last Name = "+user.getLastName());
-            System.out.println("Email = "+user.getEmail());
+        model.addAttribute("users", users);
+        return "users";
+    }
+    @RequestMapping("/addNewUser")
+    public String addNewUser(Model model){
+        User user = new User();
+        model.addAttribute("user", user);
+        return "user-info";
+    }
+    @RequestMapping("/saveUser")
+    public String saveEmployee(@Valid @ModelAttribute("user") User user,
+                               BindingResult bindingResult) {
 
-            System.out.println();
+        if (bindingResult.hasErrors()) {
+            return "user-info";
+        } else {
+            userService.saveUser(user);
+            return "redirect:/";
         }
-//        Car car1 = carService.newCar("Mercedes", "E", 250);
-//        Car car2 = carService.newCar("Lada", "KALINA", 1);
-//        Car car3 = carService.newCar("Moskvich", "Turbp", 10);
-//        Car car4 = carService.newCar("BMW", "xDrive", 330);
-//        Car car5 = carService.newCar("Volga", "Vedro", 2);
-//        List<Car> carList = new ArrayList<>();
-//        carList.add(car1);
-//        carList.add(car2);
-//        carList.add(car3);
-//        carList.add(car4);
-//        carList.add(car5);
-//        List<Car> newCars = carService.getAllCars(carList, count);
-        model.addAttribute("cars", users);
-        return "cars";
+    }
+    @RequestMapping("/updateInfo")
+    public String updateUser(@RequestParam("id") Long id, Model model) {
+        User user = userService.getUser(id);
+        model.addAttribute("user", user);
+        return "user-info";
+
+    }
+
+    @RequestMapping("/delete")
+    public String deleteEmployee (@RequestParam("id") Long id){
+        userService.deleteUser(id);
+        return "redirect:/";
+
     }
 
 }

@@ -1,4 +1,4 @@
-
+package web.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,13 +17,26 @@ public class UserServiceImp implements UserService {
 
 
 
-
     @Transactional(readOnly = true)
     @Override
     public List<User> listUsers() {
         return userDao.listUsers();
     }
 
+    @Override
+    public void saveUser(User user) {
+        userDao.saveUser(user);
+    }
+
+    @Override
+    public User getUser(Long id) {
+        return userDao.getUser(id);
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        userDao.deleteUser(id);
+    }
 
 
 }

@@ -1,44 +1,57 @@
-package hiber.dao;
+package web.dao;
 
-import hiber.model.Car;
-import hiber.model.User;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
+
+
 import org.springframework.stereotype.Repository;
-
+import org.springframework.transaction.annotation.Transactional;
+import web.entity.User;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
 public class UserDaoImp implements UserDao {
 
-   @Autowired
-   private SessionFactory sessionFactory;
+
+
+   @PersistenceContext
+   private EntityManager entityManager;
 
    @Override
-   public void add(User user) {
-      sessionFactory.getCurrentSession().save(user);
-   }
-
-
-
-   @Override
+   @Transactional(readOnly = true)
    @SuppressWarnings("unchecked")
    public List<User> listUsers() {
-      TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("from User");
+      TypedQuery<User> query = entityManager.createQuery("from User", User.class);
       return query.getResultList();
    }
 
    @Override
-   @SuppressWarnings("unchecked")
-   public User userByCar(String modelName, Integer className) {
-      TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("from User where userCar.model = :modelName and userCar.series = :className");
-      query.setParameter("modelName", modelName);
-      query.setParameter("className", className);
-      query.setMaxResults(1);
-      return ((Query<User>) query).uniqueResult();
+   @Transactional
+   public void saveUser(User user) {
+      if (user.getId() == null) {
+         entityManager.persist(user);
+      } else {
+         entityManager.merge(user);
+      }
+   }
+
+   @Override
+   @Transactional
+   public User getUser(Long id) {
+      User user = entityManager.find(User.class, id);
+      return user;
+   }
+
+   @Override
+   @Transactional
+   public void deleteUser(Long id) {
+      User user = entityManager.find(User.class, id);
+      if (user != null) {
+         entityManager.remove(user);
+      }
 
    }
+
 
 }

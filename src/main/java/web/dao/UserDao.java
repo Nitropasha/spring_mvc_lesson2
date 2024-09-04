@@ -1,12 +1,17 @@
-package hiber.dao;
+package web.dao;
 
-import hiber.model.Car;
-import hiber.model.User;
+
+
+import web.entity.User;
 
 import java.util.List;
 
 public interface UserDao {
-   void add(User user);
+
    List<User> listUsers();
-   User userByCar(String modelName, Integer className);
+   void saveUser(User user);
+   User getUser(Long id);
+   void deleteUser(Long id);
+
+
 }

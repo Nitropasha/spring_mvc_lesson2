@@ -1,6 +1,7 @@
-package hiber.model;
+package web.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "users")
@@ -8,20 +9,20 @@ public class User {
 
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @Column (name = "id")
    private Long id;
 
    @Column(name = "name")
+   @NotBlank(message = "Name is required field")
    private String firstName;
 
    @Column(name = "last_name")
+   @NotBlank(message = "Surname is required field")
    private String lastName;
 
    @Column(name = "email")
    private String email;
 
-   @OneToOne (cascade = CascadeType.ALL)
-   @JoinColumn (name = "usercar_id")
-   private Car userCar;
 
    public User() {}
    
@@ -65,12 +66,5 @@ public class User {
       this.email = email;
    }
 
-   public Car getUserCar() {
-      return userCar;
-   }
-
-   public void setUserCar(Car userCar) {
-      this.userCar = userCar;
-   }
 
 }
