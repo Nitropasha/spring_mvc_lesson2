@@ -19,7 +19,6 @@ public class UserDaoImp implements UserDao {
    private EntityManager entityManager;
 
    @Override
-   @Transactional(readOnly = true)
    @SuppressWarnings("unchecked")
    public List<User> listUsers() {
       TypedQuery<User> query = entityManager.createQuery("from User", User.class);
@@ -27,7 +26,6 @@ public class UserDaoImp implements UserDao {
    }
 
    @Override
-   @Transactional
    public void saveUser(User user) {
       if (user.getId() == null) {
          entityManager.persist(user);
@@ -37,14 +35,12 @@ public class UserDaoImp implements UserDao {
    }
 
    @Override
-   @Transactional
    public User getUser(Long id) {
       User user = entityManager.find(User.class, id);
       return user;
    }
 
    @Override
-   @Transactional
    public void deleteUser(Long id) {
       User user = entityManager.find(User.class, id);
       if (user != null) {
