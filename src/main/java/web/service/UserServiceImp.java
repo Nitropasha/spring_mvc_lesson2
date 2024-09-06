@@ -27,7 +27,7 @@ public class UserServiceImp implements UserService {
     public void saveUser(User user) {
         userDao.saveUser(user);
     }
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public User getUser(Long id) {
         return userDao.getUser(id);
